@@ -11,12 +11,12 @@ import spark.Spark;
 public class Main {
 
     public static void main(String[] args) {
-
+        
         if (System.getenv("PORT") != null) {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
 
-        Spark.get("/sivu", (req, res) -> {
+        Spark.get("*", (req, res) -> {
             HashMap map = new HashMap<>();
 
             return new ModelAndView(map, "index");
