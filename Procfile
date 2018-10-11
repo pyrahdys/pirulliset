@@ -1,1 +1,1 @@
-web:    java -cp target/classes:target/dependency/* pirulliset.Main
+web:    java -cp target/classes:target/dependency/* pirulliset.app.Main
