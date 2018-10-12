@@ -8,5 +8,16 @@
 
     <body>
         <h1>Pirulliset</h1>
+        <ol>
+            <li th:each="kysymys : ${kysymykset}">
+                <span th:text="${kysymys.kysymysteksti}">Tehtävän nimi</span>
+            </li>
+        </ol>
+
+        <form method="POST" action="/tehtavat">
+            <input type="text" name="nimi"/><br/>
+            <input type="submit" value="Add!"/>
+        </form>
     </body>
+
 </html>
