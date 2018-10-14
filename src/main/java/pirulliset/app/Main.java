@@ -134,7 +134,5 @@ public class Main {
             res.redirect("/kysymys/" + kysymysId);
             return "";
         });
-
     }
-
 }
