@@ -39,13 +39,13 @@ public class Main {
         KurssiDao kurssi = new KurssiDao(db);
         AiheDao aihe = new AiheDao(db);
         VastausDao vastaus = new VastausDao(db);
-/*
+
         Spark.get("/", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("kurssit", kurssi.findAll());
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
-
+/*
         Spark.get("/kysymys/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Integer id = Integer.parseInt(req.params(":id"));
