@@ -33,14 +33,13 @@ public class Main {
             return "Hei maailma!";
         });
         ////////////////////////////////////////////////
-        /*
+        
         Database db = new Database("jdbc:sqlite:pirulliset.db");
         KysymysDao kysymys = new KysymysDao(db);
         KurssiDao kurssi = new KurssiDao(db);
         AiheDao aihe = new AiheDao(db);
         VastausDao vastaus = new VastausDao(db);
-        Palvelinviesti viesti = new Palvelinviesti("");
-
+/*
         Spark.get("/", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("kurssit", kurssi.findAll());
