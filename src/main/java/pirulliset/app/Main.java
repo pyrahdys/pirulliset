@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         ////////////////////////////////////////////////
-        Spark.get("/hei", (req, res) -> {
+        Spark.get("*", (req, res) -> {
             return "Hei maailma!";
         });
         ////////////////////////////////////////////////
