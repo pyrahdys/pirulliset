@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import pirulliset.database.Database;
+import pirulliset.domain.Aihe;
+import pirulliset.domain.Kurssi;
+import pirulliset.domain.Kysymys;
 
 public class KysymysDao implements Dao {
 
@@ -15,10 +18,37 @@ public class KysymysDao implements Dao {
     public KysymysDao(Database db) {
         this.db = db;
     }
-    
+
     @Override
     public Object findOne(Object key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Connection conn = db.getConnection()) {
+            Kysymys etsittavaKysymys = (Kysymys) key;
+
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE LOWER(kysymysteksti) = LOWER(?) OR id = ?");
+            stmt.setString(1, etsittavaKysymys.getKysymysteksti());
+            stmt.setInt(2, etsittavaKysymys.getId());
+
+            ResultSet rs = stmt.executeQuery();
+            boolean hasOne = rs.next();
+            if (!hasOne) {
+                return null;
+            }
+
+            int id = rs.getInt("id");
+            String kysymysteksti = rs.getString("kysymysteksti");
+            Kysymys lisattavaKysymys = new Kysymys(id, kysymysteksti);
+            lisattavaKysymys.setVastaukset(new VastausDao(db).findAllByKysymysId(id));
+
+            stmt.close();
+            rs.close();
+
+            conn.close();
+            return lisattavaKysymys;
+        } catch (SQLException e) {
+            System.err.println("SQL-kysely epäonnistui");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -26,25 +56,99 @@ public class KysymysDao implements Dao {
         List kysymykset = new ArrayList<>();
         Connection conn = db.getConnection();
 
-        PreparedStatement stmt = conn.prepareStatement("SELECT kysymysteksti FROM Kysymys");
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT id, kysymysteksti FROM Kysymys");
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String kysymysteksti = rs.getString("kysymysteksti");
+            Kysymys lisattavaKysymys = new Kysymys(id, kysymysteksti);
+            lisattavaKysymys.setVastaukset(new VastausDao(db).findAllByKysymysId(id));
+            kysymykset.add(lisattavaKysymys);
+        }
+
+        conn.close();
+        return kysymykset;
+    }
+
+    public List findAllByAiheId(int aiheId) throws SQLException {
+        List kysymykset = new ArrayList<>();
+        Connection conn = db.getConnection();
+
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT id, kysymysteksti FROM Kysymys WHERE aihe_id = ?");
+        stmt.setInt(1, aiheId);
+
         ResultSet tulos = stmt.executeQuery();
 
         while (tulos.next()) {
-            String nimi = tulos.getString("kysymysteksti");
-            kysymykset.add(nimi);
+            String kysymysteksti = tulos.getString("kysymysteksti");
+            int id = tulos.getInt("id");
+            Kysymys lisattavaKysymys = new Kysymys(id, kysymysteksti);
+            lisattavaKysymys.setVastaukset(new VastausDao(db).findAllByKysymysId(id));
+            kysymykset.add(lisattavaKysymys); // Lisätään ehdon täyttävät kysymykset listalle
         }
+
         conn.close();
         return kysymykset;
     }
 
     @Override
     public Object saveOrUpdate(Object object) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Kysymys kysymys = (Kysymys) object;
+
+        Kysymys verrattava = (Kysymys) findOne(kysymys); // Tarkistetaan onko kysymys tietokannassa
+        if (verrattava != null) {
+            return kysymys;
+        }
+
+        try (Connection conn = db.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO Kysymys (aihe_id, kysymysteksti) VALUES (?, ?)");
+            stmt.setInt(1, kysymys.getAiheId());
+            stmt.setString(2, kysymys.getKysymysteksti());
+            stmt.executeUpdate();
+        }
+
+        return findOne(kysymys);
     }
 
     @Override
     public void delete(Object key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (findOne(key) == null) {
+            return;
+        }
+
+        VastausDao vastaus = new VastausDao(db); // Poistetaan kysymykseen liittyvät vastaukset
+        vastaus.deleteByKysymysId(key);
+
+        Kysymys kysymys = (Kysymys) findOne(key);
+
+        Connection conn = db.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM Kysymys WHERE id = ?");
+
+        stmt.setInt(1, kysymys.getId());
+        stmt.executeUpdate();
+
+        stmt.close();
+        conn.close();
     }
 
+    public void deleteByAiheId(Object key) throws SQLException {
+        Aihe aihe = (Aihe) key;
+
+        VastausDao vastaus = new VastausDao(db); // Poistetaan kysymykseen liittyvät vastaukset
+        for (Object kysymys : findAllByAiheId(aihe.getId())) {
+            vastaus.deleteByKysymysId(kysymys);
+        }
+
+        Connection conn = db.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM Kysymys WHERE aihe_id = ?");
+
+        stmt.setInt(1, aihe.getId());
+        stmt.executeUpdate();
+
+        stmt.close();
+        conn.close();
+    }
 }

@@ -6,7 +6,7 @@ import java.util.*;
 
 public interface Dao<T, K> {
 
-    T findOne(K key) throws SQLException;
+    T findOne(Object key) throws SQLException;
 
     List<T> findAll() throws SQLException;
 

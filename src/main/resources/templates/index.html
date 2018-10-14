@@ -2,22 +2,185 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
-        <title>Otsikko</title>
+        <title>Pirulliset</title>
         <meta charset="utf-8" /> 
     </head>
 
+
+
     <body>
-        <h1>Pirulliset</h1>
         <ol>
-            <li th:each="kysymys : ${kysymykset}">
-                <span th:text="${kysymys.kysymysteksti}">Tehtävän nimi</span>
+            <li th:each="kurssi : ${kurssit}">
+                <h2><span th:text="${kurssi.nimi}">Kurssin nimi</span>&nbsp;</h2>
+                <form method="POST" action="/kurssi/poista">
+                    <input type="hidden" name="kurssiId" th:value="${kurssi.id}"/>
+                    <input type="submit" value="Poista kurssi" id='poisto'/>
+                </form>
+
+                <ol>
+                    <li th:each="aihe : ${kurssi.aiheet}">
+                        <h3><span th:text="${aihe.nimi}">Aiheen nimi</span>&nbsp;</h3>
+                        <form method="POST" action="/aihe/poista">
+                            <input type="hidden" name="aiheId" th:value="${aihe.id}"/>
+                            <input type="submit" value="Poista aihe" id='poisto'/>
+                        </form>
+
+                        <ol>
+                            <li th:each="kysymys : ${aihe.kysymykset}">
+                                <h4><span th:text="${kysymys.kysymysteksti}">Kysymysteksti</span></h4>
+                                <p>(Vastausvaihtoehtoja:&nbsp;</p><span th:text="${#lists.size(kysymys.vastaukset)}">Määrä</span><p>) </p>
+
+                                <form method="GET" th:action="@{~/kysymys/{id}(id=${kysymys.id})}">
+                                    <!--<input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>-->
+                                    <input type="submit" value="Katso tai muokkaa vastauksia" id='lisays'/>
+                                </form>
+
+                                <form method="POST" action="/kysymys/poista">
+                                    <input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>
+                                    <input type="submit" value="Poista kysymys" id='poisto'/>
+                                </form>
+<!-- POISTETTU LOPULLISELTA SIVULTA
+                                <ol>
+                                    <li th:each="vastaus : ${kysymys.vastaukset}">
+                                        <p><span th:text="${vastaus.vastausteksti}">Vastausteksti</span> [
+                                            <b><span th:text="${vastaus.oikein}">Oikein</span></b> ]</p>
+                                        <form method="POST" action="/vastaus/poista">
+                                            <input type="hidden" name="vastausId" th:value="${vastaus.id}"/>
+                                            <input type="submit" value="Poista vastaus" id='poisto'/>
+                                        </form>
+                                    </li>
+                                </ol>
+                                <div>
+                                    <form method="POST" action="/vastaus/lisaa">
+                                        <input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>
+                                        <input type="text" name="vastausteksti"/>
+                                        <label><input type="checkbox" name="vastausOikein"/>Oikea vastaus</label>
+                                        <input type="submit" value="Lisää vastaus" id='lisays'/>
+                                    </form>
+                                </div>
+                            </li>
+                        </ol>
+-->
+
+                    </li>
+                </ol>
+                <div>
+                    <form method="POST" action="/kysymys/lisaa">
+                        <input type="hidden" name="aiheId" th:value="${aihe.id}"/>
+                        <input type="text" name="kysymysteksti"/>
+                        <input type="submit" value="Lisää kysymys" id="lisays"/>
+                    </form>
+                </div>
+            </li>
+        </ol>
+        <div>
+            <form method="POST" action="/aihe/lisaa">
+                <input type="hidden" name="kurssiId" th:value="${kurssi.id}"/>
+                <input type="text" name="aihenimi"/>
+                <input type="submit" value="Lisää aihe" id='lisays'/>
+            </form>
+        </div>
+        </li>
+        </ol>
+
+        <ol>
+            <li>
+                <form method="POST" action="/kurssi/lisaa">
+                    <input type="text" name="kurssinimi"/>
+                    <input type="submit" value="Lisää kurssi" id='lisays'/>
+                </form>
             </li>
         </ol>
 
-        <form method="POST" action="/tehtavat">
-            <input type="text" name="nimi"/><br/>
-            <input type="submit" value="Add!"/>
-        </form>
-    </body>
+        <style>
+            h1, h2, h3, h4 {
+                font-family: Tahoma, Geneva, sans-serif;
+                display: inline-block;
+            }
+            
+            form {
+                display: inline-block;
+            }
+
+            h4 {
+                font-family: Tahoma, Geneva, sans-serif;
+                padding-bottom: 5px;
+            }
+
+            input[type=text] {
+                box-sizing:border-box;
+            }
+
+            p, a {
+                display: inline-block;
+                font-family: Tahoma, Geneva, sans-serif;
+            }
+
+            div {
+                margin-top: 20px;
+                margin-bottom: 5px;
+                margin-right: 5px;
+                text-align: right;
+            }
+
+            #poisto {
+                background-color: #ff5500;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 5px;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                opacity: 0.9;
+                box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2), 0 3px 10px 0 rgba(0,0,0,0.19);
+            }
+
+            #poisto:hover {
+                background-color: #644556;
+            }
+
+            #poisto:active {
+                background-color: #644556;
+            }
+
+            #lisays {
+                background-color: #2eb82e;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 5px;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2), 0 3px 10px 0 rgba(0,0,0,0.19);
+            }
+
+            #lisays:hover {
+                background-color: #644556;
+            }
+
+            #lisays:active {
+                background-color: #644556;
+            }
+
+
+            li {
+                border-radius: 15px;
+                border: none;
+                list-style-type: none;
+                background: #fff2e6;
+                box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+                padding: 8px;
+                margin: 5px;
+            }
+
+            ol {
+                padding: 0px;
+                margin: 0px;
+            }
+        </style>
 
 </html>

@@ -1,27 +1,46 @@
 
 package pirulliset.domain;
 
-public class Kysymys {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Kysymys extends AbstractNamedObject {
     
-    String kurssi;
-    String aihe;
-    String kysymysteksti;
+    private int aiheId;
+    private String kysymysteksti;
+    private List vastaukset;
 
-    public Kysymys(String kurssi, String aihe, String kysymysteksti) {
-        this.kurssi = kurssi;
-        this.aihe = aihe;
+    public Kysymys(int id, String kysymysteksti) {
+        super(id);
         this.kysymysteksti = kysymysteksti;
+        this.vastaukset = new ArrayList<>();
     }
 
-    public String getAihe() {
-        return aihe;
-    }
-
-    public String getKurssi() {
-        return kurssi;
+    public Kysymys(int id, int aiheId, String kysymysteksti) {
+        super(id);
+        this.aiheId = aiheId;
+        this.kysymysteksti = kysymysteksti;
+        this.vastaukset = new ArrayList<>();
     }
 
     public String getKysymysteksti() {
         return kysymysteksti;
     }
+
+    public void setVastaukset(List vastaukset) {
+        this.vastaukset = vastaukset;
+    }
+
+    public List getVastaukset() {
+        return vastaukset;
+    }
+
+    public void lisaaVastaus(Vastaus vastaus) {
+        this.vastaukset.add(vastaukset);
+    }
+
+    public int getAiheId() {
+        return aiheId;
+    }
+
 }
