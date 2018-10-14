@@ -26,8 +26,8 @@ public class Main {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
         
-        File tiedosto = new File("db", "pirulliset.db");
-        Database db = new Database("jdbc:sqlite:" + tiedosto.getAbsolutePath());
+        //File tiedosto = new File("db", "pirulliset.db");
+        Database db = new Database("jdbc:sqlite:pirulliset.db");
         KysymysDao kysymys = new KysymysDao(db);
         KurssiDao kurssi = new KurssiDao(db);
         AiheDao aihe = new AiheDao(db);
@@ -39,7 +39,7 @@ public class Main {
             map.put("kurssit", kurssi.findAll());
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
-/*
+
         Spark.get("/kysymys/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Integer id = Integer.parseInt(req.params(":id"));
@@ -128,6 +128,5 @@ public class Main {
             res.redirect("/kysymys/" + kysymysId);
             return "";
         });
-*/
     }
 }
