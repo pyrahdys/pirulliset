@@ -40,7 +40,7 @@ public class Main {
         AiheDao aihe = new AiheDao(db);
         VastausDao vastaus = new VastausDao(db);
 
-        Spark.get("/k", (req, res) -> { // pois /k
+        Spark.get("/", (req, res) -> { // pois /k
             HashMap map = new HashMap<>();
             map.put("kurssit", kurssi.findAll());
             return new ModelAndView(map, "index");
