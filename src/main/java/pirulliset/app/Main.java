@@ -27,7 +27,7 @@ public class Main {
             return "Hei maailma!";
         });
         ////////////////////////////////////////////////
-        
+        /*
         if (System.getenv("PORT") != null) {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
@@ -133,5 +133,7 @@ public class Main {
             res.redirect("/kysymys/" + kysymysId);
             return "";
         });
+*/
     }
+
 }
