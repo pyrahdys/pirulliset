@@ -21,34 +21,29 @@ public class AiheDao implements Dao {
 
     @Override
     public Object findOne(Object key) throws SQLException {
-        try (Connection conn = db.getConnection()) {
-            Aihe etsittavaAihe = (Aihe) key;
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Aihe WHERE (LOWER(nimi) = LOWER(?) AND kurssi_id = ?) OR id = ?");
-            stmt.setString(1, etsittavaAihe.getNimi());
-            stmt.setInt(2, etsittavaAihe.getKurssiId());
-            stmt.setInt(3, etsittavaAihe.getId());
+        Aihe etsittavaAihe = (Aihe) key;
+        Connection conn = db.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Aihe WHERE (LOWER(nimi) = LOWER(?) AND kurssi_id = ?) OR id = ?");
+        stmt.setString(1, etsittavaAihe.getNimi());
+        stmt.setInt(2, etsittavaAihe.getKurssiId());
+        stmt.setInt(3, etsittavaAihe.getId());
 
-            ResultSet rs = stmt.executeQuery();
-            boolean hasOne = rs.next();
-            if (!hasOne) {
-                return null;
-            }
-            
-            String nimi = rs.getString("nimi");
-            int id = rs.getInt("id");
-            Aihe lisattavaAihe = new Aihe(id, nimi);
-            lisattavaAihe.setKysymykset(new KysymysDao(db).findAllByAiheId(id));
-            
-            stmt.close();
-            rs.close();
-            conn.close();
-
-            return lisattavaAihe;
-        } catch (SQLException e) {
-            System.err.println("SQL-kysely epäonnistui");
-            e.printStackTrace();
+        ResultSet rs = stmt.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
             return null;
         }
+
+        String nimi = rs.getString("nimi");
+        int id = rs.getInt("id");
+        Aihe lisattavaAihe = new Aihe(id, nimi);
+        lisattavaAihe.setKysymykset(new KysymysDao(db).findAllByAiheId(id));
+
+        stmt.close();
+        rs.close();
+        conn.close();
+
+        return lisattavaAihe;
     }
 
     @Override
@@ -121,7 +116,7 @@ public class AiheDao implements Dao {
 
         KysymysDao kysymys = new KysymysDao(db);
         kysymys.deleteByAiheId(key);
-        
+
         Aihe aihe = (Aihe) findOne(key);
 
         Connection conn = db.getConnection();
@@ -141,7 +136,7 @@ public class AiheDao implements Dao {
         for (Object aihe : findAllByKurssiId(kurssi.getId())) {
             kysymys.deleteByAiheId(aihe);
         }
-        
+
         Connection conn = db.getConnection();
         PreparedStatement stmt = conn.prepareStatement("DELETE FROM Aihe WHERE kurssi_id = ?");
 

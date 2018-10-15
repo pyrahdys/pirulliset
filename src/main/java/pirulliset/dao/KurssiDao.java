@@ -19,34 +19,29 @@ public class KurssiDao implements Dao {
 
     @Override
     public Object findOne(Object key) throws SQLException {
-        try (Connection conn = db.getConnection()) {
-            Kurssi etsittavaKurssi = (Kurssi) key;
-            
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kurssi WHERE LOWER(nimi) = LOWER(?) OR id = ?");
-            stmt.setString(1, etsittavaKurssi.getNimi());
-            stmt.setInt(2, etsittavaKurssi.getId());
-            
-            ResultSet rs = stmt.executeQuery();
-            boolean hasOne = rs.next();
-            if (!hasOne) {
-                return null;
-            }
+        Kurssi etsittavaKurssi = (Kurssi) key;
+        Connection conn = db.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kurssi WHERE LOWER(nimi) = LOWER(?) OR id = ?");
+        stmt.setString(1, etsittavaKurssi.getNimi());
+        stmt.setInt(2, etsittavaKurssi.getId());
 
-            String nimi = rs.getString("nimi");
-            int id = rs.getInt("id");
-            Kurssi lisattavaKurssi = new Kurssi(id, nimi);
-            lisattavaKurssi.setAiheet(new AiheDao(db).findAllByKurssiId(id));
-            
-            stmt.close();
-            rs.close();
-            conn.close();
-
-            return lisattavaKurssi;
-        } catch (SQLException e) {
-            System.err.println("SQL-kysely epäonnistui");
-            e.printStackTrace();
+        ResultSet rs = stmt.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
             return null;
         }
+
+        String nimi = rs.getString("nimi");
+        int id = rs.getInt("id");
+        Kurssi lisattavaKurssi = new Kurssi(id, nimi);
+        lisattavaKurssi.setAiheet(new AiheDao(db).findAllByKurssiId(id));
+
+        stmt.close();
+        rs.close();
+        conn.close();
+
+        return lisattavaKurssi;
+
     }
 
     @Override

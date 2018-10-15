@@ -21,35 +21,30 @@ public class KysymysDao implements Dao {
 
     @Override
     public Object findOne(Object key) throws SQLException {
-        try (Connection conn = db.getConnection()) {
-            Kysymys etsittavaKysymys = (Kysymys) key;
+        Kysymys etsittavaKysymys = (Kysymys) key;
 
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE (LOWER(kysymysteksti) = LOWER(?) AND aihe_id = ?) OR id = ?");
-            stmt.setString(1, etsittavaKysymys.getKysymysteksti());
-            stmt.setInt(2, etsittavaKysymys.getAiheId());
-            stmt.setInt(3, etsittavaKysymys.getId());
+        Connection conn = db.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE (LOWER(kysymysteksti) = LOWER(?) AND aihe_id = ?) OR id = ?");
+        stmt.setString(1, etsittavaKysymys.getKysymysteksti());
+        stmt.setInt(2, etsittavaKysymys.getAiheId());
+        stmt.setInt(3, etsittavaKysymys.getId());
 
-            ResultSet rs = stmt.executeQuery();
-            boolean hasOne = rs.next();
-            if (!hasOne) {
-                return null;
-            }
-
-            int id = rs.getInt("id");
-            String kysymysteksti = rs.getString("kysymysteksti");
-            Kysymys lisattavaKysymys = new Kysymys(id, kysymysteksti);
-            lisattavaKysymys.setVastaukset(new VastausDao(db).findAllByKysymysId(id));
-
-            stmt.close();
-            rs.close();
-
-            conn.close();
-            return lisattavaKysymys;
-        } catch (SQLException e) {
-            System.err.println("SQL-kysely epäonnistui");
-            e.printStackTrace();
+        ResultSet rs = stmt.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
             return null;
         }
+
+        int id = rs.getInt("id");
+        String kysymysteksti = rs.getString("kysymysteksti");
+        Kysymys lisattavaKysymys = new Kysymys(id, kysymysteksti);
+        lisattavaKysymys.setVastaukset(new VastausDao(db).findAllByKysymysId(id));
+
+        stmt.close();
+        rs.close();
+
+        conn.close();
+        return lisattavaKysymys;
     }
 
     @Override

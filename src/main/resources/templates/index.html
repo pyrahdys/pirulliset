@@ -6,8 +6,6 @@
         <meta charset="utf-8" /> 
     </head>
 
-
-
     <body>
         <ol>
             <li th:each="kurssi : ${kurssit}">
@@ -31,57 +29,34 @@
                                 <p>(Vastausvaihtoehtoja:&nbsp;</p><span th:text="${#lists.size(kysymys.vastaukset)}">Määrä</span>
                                 <p><span th:if="${kysymys.sisaltaaOikeanVastauksen} == false">, ei sisällä oikeaa vastausta</p><p>) </p>
                                 <br>
-                                <form method="GET" th:action="@{~/kysymys/{id}(id=${kysymys.id})}">
-                                    <!--<input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>-->
-                                    <input type="submit" value="Katso tai muokkaa vastauksia" id='lisays'/>
-                                </form>
-
-                                <form method="POST" action="/kysymys/poista">
-                                    <input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>
-                                    <input type="submit" value="Poista kysymys" id='poisto'/>
-                                </form>
-<!-- POISTETTU LOPULLISELTA SIVULTA
-                                <ol>
-                                    <li th:each="vastaus : ${kysymys.vastaukset}">
-                                        <p><span th:text="${vastaus.vastausteksti}">Vastausteksti</span> [
-                                            <b><span th:text="${vastaus.oikein}">Oikein</span></b> ]</p>
-                                        <form method="POST" action="/vastaus/poista">
-                                            <input type="hidden" name="vastausId" th:value="${vastaus.id}"/>
-                                            <input type="submit" value="Poista vastaus" id='poisto'/>
-                                        </form>
-                                    </li>
-                                </ol>
-                                <div>
-                                    <form method="POST" action="/vastaus/lisaa">
-                                        <input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>
-                                        <input type="text" name="vastausteksti"/>
-                                        <label><input type="checkbox" name="vastausOikein"/>Oikea vastaus</label>
-                                        <input type="submit" value="Lisää vastaus" id='lisays'/>
+                                    <form method="GET" th:action="@{~/kysymys/{id}(id=${kysymys.id})}">
+                                        <input type="submit" value="Katso tai muokkaa vastauksia" id='lisays'/>
                                     </form>
-                                </div>
+
+                                    <form method="POST" action="/kysymys/poista">
+                                        <input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>
+                                        <input type="submit" value="Poista kysymys" id='poisto'/>
+                                    </form>
+
                             </li>
                         </ol>
--->
-
+                        <div>
+                            <form method="POST" action="/kysymys/lisaa">
+                                <input type="hidden" name="aiheId" th:value="${aihe.id}"/>
+                                <input type="text" name="kysymysteksti"/>
+                                <input type="submit" value="Lisää kysymys" id="lisays"/>
+                            </form>
+                        </div>
                     </li>
                 </ol>
                 <div>
-                    <form method="POST" action="/kysymys/lisaa">
-                        <input type="hidden" name="aiheId" th:value="${aihe.id}"/>
-                        <input type="text" name="kysymysteksti"/>
-                        <input type="submit" value="Lisää kysymys" id="lisays"/>
+                    <form method="POST" action="/aihe/lisaa">
+                        <input type="hidden" name="kurssiId" th:value="${kurssi.id}"/>
+                        <input type="text" name="aihenimi"/>
+                        <input type="submit" value="Lisää aihe" id='lisays'/>
                     </form>
                 </div>
             </li>
-        </ol>
-        <div>
-            <form method="POST" action="/aihe/lisaa">
-                <input type="hidden" name="kurssiId" th:value="${kurssi.id}"/>
-                <input type="text" name="aihenimi"/>
-                <input type="submit" value="Lisää aihe" id='lisays'/>
-            </form>
-        </div>
-        </li>
         </ol>
 
         <ol>
@@ -93,12 +68,14 @@
             </li>
         </ol>
 
+        <!-- Sisältää CSS-määrittelyt, kun muuten pelkkä HTML-tuotos näyttää vähän sekavalta... Tyylit ei taida toimia IE:ssä -->
+        
         <style>
             h1, h2, h3, h4 {
                 font-family: Tahoma, Geneva, sans-serif;
                 display: inline-block;
             }
-            
+
             form {
                 display: inline-block;
             }
