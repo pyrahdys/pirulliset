@@ -47,7 +47,9 @@ public class Kysymys extends AbstractNamedObject {
     public Boolean getSisaltaaOikeanVastauksen() {
         for (Object v : this.vastaukset) {
             Vastaus vastaus = (Vastaus) v;
-            return vastaus.getOikein();
+            if (vastaus.getOikein() == true) {
+                return true;
+            }
         }
         return false;
     }
