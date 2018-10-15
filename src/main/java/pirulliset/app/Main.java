@@ -43,6 +43,7 @@ public class Main {
             Integer id = Integer.parseInt(req.params(":id"));
             Kysymys k = (Kysymys) kysymys.findOne(new Kysymys(id, ""));
             map.put("kysymykset", k);
+            map.put("kurssit", kurssi.findAll());
             return new ModelAndView(map, "kysymys");
         }, new ThymeleafTemplateEngine());
         

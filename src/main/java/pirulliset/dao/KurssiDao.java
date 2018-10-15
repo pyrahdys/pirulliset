@@ -18,7 +18,7 @@ public class KurssiDao implements Dao {
     }
 
     @Override
-    public Object findOne(Object key) throws SQLException {
+    public Object findOne(Object key) throws SQLException { // Katsotaan, löytyykö kurssia nimellä tai ID:llä
         Kurssi etsittavaKurssi = (Kurssi) key;
         Connection conn = db.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kurssi WHERE LOWER(nimi) = LOWER(?) OR id = ?");

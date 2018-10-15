@@ -20,7 +20,7 @@ public class KysymysDao implements Dao {
     }
 
     @Override
-    public Object findOne(Object key) throws SQLException {
+    public Object findOne(Object key) throws SQLException { // Katsotaan, löytyykö kysymystä kysymystekstin ja aihe_id:n yhdistelmällä tai ID:llä
         Kysymys etsittavaKysymys = (Kysymys) key;
 
         Connection conn = db.getConnection();
@@ -68,7 +68,7 @@ public class KysymysDao implements Dao {
         return kysymykset;
     }
 
-    public List findAllByAiheId(int aiheId) throws SQLException {
+    public List findAllByAiheId(int aiheId) throws SQLException { // Etsitään kaikki aiheen kysymykset aiheen ID:llä
         List kysymykset = new ArrayList<>();
         Connection conn = db.getConnection();
 
@@ -110,7 +110,7 @@ public class KysymysDao implements Dao {
     }
 
     @Override
-    public void delete(Object key) throws SQLException {
+    public void delete(Object key) throws SQLException { // poistetaan kaikki aiheen kysymykset aiheen ID:llä
         if (findOne(key) == null) {
             return;
         }

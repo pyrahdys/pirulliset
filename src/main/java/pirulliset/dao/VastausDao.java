@@ -21,7 +21,7 @@ public class VastausDao implements Dao {
     }
 
     @Override
-    public Object findOne(Object key) throws SQLException {
+    public Object findOne(Object key) throws SQLException { // Katsotaan, löytyykö vastausta vastaustekstin ja kysymys_id:n yhdistelmällä tai ID:llä
         Vastaus etsittavaVastaus = (Vastaus) key;
         Connection conn = db.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Vastaus WHERE (LOWER(vastausteksti) = LOWER(?) AND kysymys_id = ?) OR id = ?");
@@ -45,7 +45,7 @@ public class VastausDao implements Dao {
     }
 
     @Override
-    public List findAll() throws SQLException { // Kesken, korjaa!!!
+    public List findAll() throws SQLException {
         List vastaukset = new ArrayList<>();
 
         Connection conn = db.getConnection();
@@ -66,7 +66,7 @@ public class VastausDao implements Dao {
 
     }
 
-    public List findAllByKysymysId(int kysymysId) throws SQLException {
+    public List findAllByKysymysId(int kysymysId) throws SQLException { // Etsitään kaikki kysymyksen vastaukset kysymyksen ID:llä
         List vastaukset = new ArrayList<>();
         Connection conn = db.getConnection();
 
@@ -120,7 +120,7 @@ public class VastausDao implements Dao {
         conn.close();
     }
 
-    public void deleteByKysymysId(Object key) throws SQLException {
+    public void deleteByKysymysId(Object key) throws SQLException { // poistetaan kaikki kysymyksen vastaukset kysymyksen ID:llä
         Kysymys kysymys = (Kysymys) key;
 
         Connection conn = db.getConnection();

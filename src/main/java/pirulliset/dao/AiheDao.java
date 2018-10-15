@@ -20,7 +20,7 @@ public class AiheDao implements Dao {
     }
 
     @Override
-    public Object findOne(Object key) throws SQLException {
+    public Object findOne(Object key) throws SQLException { // Katsotaan, löytyykö aihetta nimen ja kurssi_id:n yhdistelmällä tai ID:llä
         Aihe etsittavaAihe = (Aihe) key;
         Connection conn = db.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Aihe WHERE (LOWER(nimi) = LOWER(?) AND kurssi_id = ?) OR id = ?");
@@ -67,7 +67,7 @@ public class AiheDao implements Dao {
         return aiheet;
     }
 
-    public List findAllByKurssiId(int kurssiId) throws SQLException {
+    public List findAllByKurssiId(int kurssiId) throws SQLException {  // Etsitään kaikki kurssin aiheet kurssin ID:llä
         List aiheet = new ArrayList<>();
         Connection conn = db.getConnection();
 
@@ -129,7 +129,7 @@ public class AiheDao implements Dao {
         conn.close();
     }
 
-    public void deleteByKurssiId(Object key) throws SQLException {
+    public void deleteByKurssiId(Object key) throws SQLException { // poistetaan kaikki kurssin aiheet kurssin ID:llä
         Kurssi kurssi = (Kurssi) key;
 
         KysymysDao kysymys = new KysymysDao(db); // Poistetaan aiheeseen liittyvät kysymykset
