@@ -24,9 +24,10 @@ public class KysymysDao implements Dao {
         try (Connection conn = db.getConnection()) {
             Kysymys etsittavaKysymys = (Kysymys) key;
 
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE LOWER(kysymysteksti) = LOWER(?) OR id = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kysymys WHERE (LOWER(kysymysteksti) = LOWER(?) AND aihe_id = ?) OR id = ?");
             stmt.setString(1, etsittavaKysymys.getKysymysteksti());
-            stmt.setInt(2, etsittavaKysymys.getId());
+            stmt.setInt(2, etsittavaKysymys.getAiheId());
+            stmt.setInt(3, etsittavaKysymys.getId());
 
             ResultSet rs = stmt.executeQuery();
             boolean hasOne = rs.next();

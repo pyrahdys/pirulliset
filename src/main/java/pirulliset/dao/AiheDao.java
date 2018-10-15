@@ -23,9 +23,10 @@ public class AiheDao implements Dao {
     public Object findOne(Object key) throws SQLException {
         try (Connection conn = db.getConnection()) {
             Aihe etsittavaAihe = (Aihe) key;
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Aihe WHERE LOWER(nimi) = LOWER(?) OR id = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Aihe WHERE (LOWER(nimi) = LOWER(?) AND kurssi_id = ?) OR id = ?");
             stmt.setString(1, etsittavaAihe.getNimi());
-            stmt.setInt(2, etsittavaAihe.getId());
+            stmt.setInt(2, etsittavaAihe.getKurssiId());
+            stmt.setInt(3, etsittavaAihe.getId());
 
             ResultSet rs = stmt.executeQuery();
             boolean hasOne = rs.next();

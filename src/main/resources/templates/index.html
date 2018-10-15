@@ -28,8 +28,9 @@
                         <ol>
                             <li th:each="kysymys : ${aihe.kysymykset}">
                                 <h4><span th:text="${kysymys.kysymysteksti}">Kysymysteksti</span></h4>
-                                <p>(Vastausvaihtoehtoja:&nbsp;</p><span th:text="${#lists.size(kysymys.vastaukset)}">Määrä</span><p>) </p>
-
+                                <p>(Vastausvaihtoehtoja:&nbsp;</p><span th:text="${#lists.size(kysymys.vastaukset)}">Määrä</span>
+                                <p><span th:if="${kysymys.sisaltaaOikeanVastauksen} == false">, ei sisällä oikeaa vastausta</p><p>) </p>
+                                <br>
                                 <form method="GET" th:action="@{~/kysymys/{id}(id=${kysymys.id})}">
                                     <!--<input type="hidden" name="kysymysId" th:value="${kysymys.id}"/>-->
                                     <input type="submit" value="Katso tai muokkaa vastauksia" id='lisays'/>

@@ -10,7 +10,6 @@
         <ol>
             <li th:each="kysymys : ${kysymykset}">
                 <h3>Kysymys: <span th:text="${kysymys.kysymysteksti}">Kysymysteksti</span></h3>
-                <!--<span th:text="${kysymys.aihe.id}">Kysymysteksti</span>-->
                 <ol>
                     <li th:each="vastaus : ${kysymys.vastaukset}">
                         <h3><span th:text="${vastaus.vastausteksti}">Vastausteksti </span></h3><p>&nbsp;[
@@ -32,6 +31,7 @@
                 </div>
             </li>
         </ol>
+        <a href="/">Palaa kysymyslistaan</a> 
 
         <style>
             h1, h2, h3, h4, form {

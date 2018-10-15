@@ -22,17 +22,9 @@ import spark.Spark;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        
-        
         if (System.getenv("PORT") != null) {
             Spark.port(Integer.valueOf(System.getenv("PORT")));
         }
-        
-        ////////////////////////////////////////////////
-        Spark.get("/h", (req, res) -> {
-            return "Hei maailma!";
-        });
-        ////////////////////////////////////////////////
         
         Database db = new Database("jdbc:sqlite:pirulliset.db");
         KysymysDao kysymys = new KysymysDao(db);
@@ -40,7 +32,7 @@ public class Main {
         AiheDao aihe = new AiheDao(db);
         VastausDao vastaus = new VastausDao(db);
 
-        Spark.get("/", (req, res) -> { // pois /k
+        Spark.get("/", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("kurssit", kurssi.findAll());
             return new ModelAndView(map, "index");
@@ -54,12 +46,19 @@ public class Main {
             return new ModelAndView(map, "kysymys");
         }, new ThymeleafTemplateEngine());
         
+        Spark.get("/kysymys/:id/:ilmoitus", (req, res) -> { // Lisää ilmoituksen
+            HashMap map = new HashMap<>();
+            Integer id = Integer.parseInt(req.params(":id"));
+            Kysymys k = (Kysymys) kysymys.findOne(new Kysymys(id, ""));
+            map.put("kysymykset", k);
+            return new ModelAndView(map, "kysymys");
+        }, new ThymeleafTemplateEngine());
+        
         Spark.post("/kurssi/lisaa", (req, res) -> {
             String nimi = req.queryParams("kurssinimi");
-            if (nimi == null || nimi.isEmpty()) {
-                return "<p>Kurssin nimi ei voi olla tyhjä.</p>";
-            };
+            if (nimi == null || nimi.isEmpty()) {return "<p>Kurssin nimi ei voi olla tyhjä.</p>";}
             Kurssi lisattavaKurssi = new Kurssi(-1, nimi);
+            if (kurssi.findOne(lisattavaKurssi) != null) {return "<p>Kurssi '" + nimi + "' on jo luotu.</p>";}
             kurssi.saveOrUpdate(lisattavaKurssi);
             res.redirect("/");
             return "";
@@ -67,11 +66,10 @@ public class Main {
 
         Spark.post("/aihe/lisaa", (req, res) -> {
             String nimi = req.queryParams("aihenimi");
-            if (nimi == null || nimi.isEmpty()) {
-                return "<p>Aiheen nimi ei voi olla tyhjä.</p>";
-            };
+            if (nimi == null || nimi.isEmpty()) {return "<p>Aiheen nimi ei voi olla tyhjä.</p>";}
             int kurssiId = Integer.parseInt(req.queryParams("kurssiId"));
             Aihe lisattavaAihe = new Aihe(-1, kurssiId, nimi);
+            if (aihe.findOne(lisattavaAihe) != null) {return "<p>Aihe '" + nimi + "' on jo luotu.</p>";}
             aihe.saveOrUpdate(lisattavaAihe);
             res.redirect("/");
             return "";
@@ -79,11 +77,10 @@ public class Main {
 
         Spark.post("/kysymys/lisaa", (req, res) -> {
             String nimi = req.queryParams("kysymysteksti");
-            if (nimi == null || nimi.isEmpty()) {
-                return "<p>Kysymysteksti ei voi olla tyhjä.</p>";
-            };
+            if (nimi == null || nimi.isEmpty()) {return "<p>Kysymysteksti ei voi olla tyhjä.</p>";}
             int aiheId = Integer.parseInt(req.queryParams("aiheId"));
             Kysymys lisattavaKysmys = new Kysymys(-1, aiheId, nimi);
+            if (kysymys.findOne(lisattavaKysmys) != null) {return "<p>Kysymys '" + nimi + "' on jo luotu.</p>";}
             kysymys.saveOrUpdate(lisattavaKysmys);
             res.redirect("/");
             return "";
@@ -91,12 +88,11 @@ public class Main {
 
         Spark.post("/vastaus/lisaa", (req, res) -> {
             String nimi = req.queryParams("vastausteksti");
-            if (nimi == null || nimi.isEmpty()) {
-                return "<p>Vastausteksti ei voi olla tyhjä.</p>";
-            };
+            if (nimi == null || nimi.isEmpty()) {return "<p>Vastausteksti ei voi olla tyhjä.</p>";}
             int kysymysId = Integer.parseInt(req.queryParams("kysymysId"));
             Boolean oikein = !((req.queryParams("vastausOikein")) == null);
             Vastaus lisattavaVastaus = new Vastaus(-1, kysymysId, nimi, oikein);
+            if (vastaus.findOne(lisattavaVastaus) != null) {return "<p>Vastaus '" + nimi + "' on jo luotu.</p>";}
             vastaus.saveOrUpdate(lisattavaVastaus);
             res.redirect("/kysymys/" + kysymysId);
             return "";

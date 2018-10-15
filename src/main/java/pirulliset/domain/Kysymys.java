@@ -9,6 +9,7 @@ public class Kysymys extends AbstractNamedObject {
     private int aiheId;
     private String kysymysteksti;
     private List vastaukset;
+    private Boolean sisaltaaOikeanVastauksen;
 
     public Kysymys(int id, String kysymysteksti) {
         super(id);
@@ -42,5 +43,12 @@ public class Kysymys extends AbstractNamedObject {
     public int getAiheId() {
         return aiheId;
     }
-
+    
+    public Boolean getSisaltaaOikeanVastauksen() {
+        for (Object v : this.vastaukset) {
+            Vastaus vastaus = (Vastaus) v;
+            return vastaus.getOikein();
+        }
+        return false;
+    }
 }
